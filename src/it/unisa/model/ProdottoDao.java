@@ -31,13 +31,25 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 		}
 	}
 	
+
 	private static final String TABLE_NAME = "prodotto";
+	
+	private String sanitizeInput(String input) {
+		String test = input.replace("<", "");
+		test = input.replace(">","");
+		return test;
+	}
 
 	@Override
 	public synchronized void doSave(ProdottoBean product) throws SQLException {
 
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
+		
+		//fatto per ogni campo -- magari nel Bean
+		product.setDescrizione(sanitizeInput(product.getDescrizione()));
+		product.setDataUscita(sanitizeInput(product.getDataUscita()));
+		product.setNome(sanitizeInput(product.getNome()));
 
 		String insertSQL = "INSERT INTO " + ProdottoDao.TABLE_NAME
 				+ " (NOME, PIATTAFORMA, DESCRIZIONE, PREZZO, QUANTITA, GENERE, DATA_USCITA, IN_VENDITA, IVA, IMMAGINE, DESCRIZIONE_DETTAGLIATA) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
