@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -16,6 +17,7 @@ import javax.sql.DataSource;
 public class ProdottoDao implements ProdottoDaoInterfaccia{
 
 	private static DataSource ds;
+	private static final ArrayList<String> VALID_ORDERBY = new ArrayList<String>(List.of("NOME","DESCRZIONE","GENERE","DESCRIZIONE_DETTAGLIATA")) ;
 
 	static {
 		try {
@@ -115,6 +117,8 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 		}
 		return bean;
 	}
+	
+
 
 	@Override
 	public synchronized boolean doDelete(int idProdotto) throws SQLException {
@@ -153,7 +157,8 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 
 		String selectSQL = "SELECT * FROM " + ProdottoDao.TABLE_NAME;
 
-		if (order != null && !order.equals("")) {
+		
+		if (order != null && !order.equals("") && isValidOrder(order)) {
 			selectSQL += " ORDER BY " + order;
 		}
 
@@ -192,6 +197,10 @@ public class ProdottoDao implements ProdottoDaoInterfaccia{
 			}
 		}
 		return products;
+	}
+	
+	private boolean isValidOrder(String order) {
+		return VALID_ORDERBY.contains(order);
 	}
 	
 	@Override
